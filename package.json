@@ -1,0 +1,24 @@
+{
+  "name": "warframe-discord-alert-bot",
+  "version": "0.0.1",
+  "description": "Warframe Alert bot for Disocrd",
+  "main": "build/bot.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LilithTundrus/Warframe-Discord-Alert-Bot.git"
+  },
+  "author": "Lilith Tundrus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LilithTundrus/Warframe-Discord-Alert-Bot/issues"
+  },
+  "homepage": "https://github.com/LilithTundrus/Warframe-Discord-Alert-Bot#readme",
+  "dependencies": {
+    "@types/node": "^10.3.4",
+    "discord-paginationembed": "github:gazmull/discord-paginationembed",
+    "discord.js": "^11.3.2"
+  }
+}
