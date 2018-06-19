@@ -20,6 +20,8 @@
     "@types/node": "^10.3.4",
     "colorful-log-levels": "^0.2.0",
     "discord-paginationembed": "github:gazmull/discord-paginationembed",
-    "discord.js": "^11.3.2"
+    "discord.js": "^11.3.2",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
   }
 }
