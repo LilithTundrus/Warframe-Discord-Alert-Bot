@@ -27,7 +27,7 @@ const logger = new Logger('../logs', logLevels.error, true);
 /* 
 
 Bot intention:
-
+Support a single Discord guild/server on getting alerts
 
 Notes:
 
@@ -35,6 +35,7 @@ Assumptions made:
 
 
 */
+
 // Log the bot in
 client.login(botToken);
 
@@ -42,7 +43,7 @@ client.on('ready', () => {
     // This event fires on being connected to the Discord 
 
     // On READY, we should set a scheduler to check for alerts
-    initScheduler(client)
+    initScheduler(client);
 
     logger.info(`Connected to Discord.\nLogged in as ${client.user.username} (${client.user.id})`);
     client.user.setActivity(`Serving ${client.guilds.size} servers`);
