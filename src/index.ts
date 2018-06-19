@@ -11,6 +11,9 @@ import {
     adminID, inviteURL
 } from './config';
 
+// Embed templates
+import { createRichError } from './coomon/createRichError';
+import { createRichEmbed } from './coomon/createRichEmbed';
 
 // Create an instance of a Discord client
 const client = new Discord.Client();
@@ -28,9 +31,13 @@ Assumptions made:
 
 
 */
+// Log the bot in
+client.login(botToken);
 
 client.on('ready', () => {
     // This event fires on being connected to the Discord 
+
+    // On READY, we should set a scheduler to check for alerts
     logger.info(`Connected to Discord.\nLogged in as ${client.user.username} (${client.user.id})`);
     client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
@@ -61,7 +68,7 @@ client.on('message', async message => {
 
     switch (command) {
         case 'help':
-        // return helpCommandHandler(message, args);
+        // Send a help messages through commands/help
         case 'ping':
             // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
             // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
@@ -69,19 +76,16 @@ client.on('message', async message => {
             m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
             break;
         default:
-        // If command character + unknown command is given we at least need to let the user know
-        // let errorEmbed = createRichError(`Uknown command: **${command}**`);
-        // return message.channel.send(errorEmbed);
+            // If command character + unknown command is given we at least need to let the user know
+            let errorEmbed = createRichError(`Uknown command: **${command}**`);
+            return message.channel.send(errorEmbed);
     }
 });
 
+// Catch any general errors from the bot and at least log them, as well as sending a message
 client.on('error', async error => {
     logger.error(error);
     client.user.sendMessage(JSON.stringify(error.message, null, 2), {
         reply: adminID
     });
 });
-
-
-// Log the bot in
-client.login(botToken);
