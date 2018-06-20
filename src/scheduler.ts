@@ -1,24 +1,31 @@
 import * as Discord from 'discord.js';
 import * as request from 'request-promise';
+import Logger from 'colorful-log-levels';
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
 
 // This is the function that will handle getting the alerts on an interval
-export function initScheduler(client: Discord.Client, ) {
+export function initScheduler(client: Discord.Client, logger: Logger) {
     setInterval(() => {
-        // request.get(warframeWorldsstateURL)
-        request.get('ahfjal')
-            .then((results: string) => {
-                let discordChannel: any = client.channels.get(alertChannel);
-                discordChannel.send(`Warframe manifest is ${results.length} bytes`);
-            })
-            .catch((err) => {
-                // Get the guild to retrive the user for
-                let guild = client.guilds.get(guildID);
-                // Get the user object by ID
-                let admin = guild.members.get(adminID);
-                // Message the admin that something went wrong
-                let discordChannel: any = client.channels.get(alertChannel);
-                discordChannel.send(`Hey ${admin}, something went wrong: ${err}`);
-            })
-    }, 10000)
+        checkForAlertUpdates(client, logger);
+    }, 10000);
+}
+
+export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
+    request.get(warframeWorldsstateURL)
+        .then((results: string) => {
+            let discordChannel: any = client.channels.get(alertChannel);
+            let warframeJSON = JSON.parse(results);
+            console.log(warframeJSON);
+            discordChannel.send(`Warframe manifest is ${results.length} bytes`);
+        })
+        .catch((err) => {
+            logger.error(err);
+            // Get the guild to retrive the user for
+            let guild = client.guilds.get(guildID);
+            // Get the user object by ID
+            let admin = guild.members.get(adminID);
+            // Message the admin that something went wrong
+            let discordChannel: any = client.channels.get(alertChannel);
+            discordChannel.send(`${admin}, something went wrong: ${err}`);
+        })
 }

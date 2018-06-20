@@ -18,15 +18,14 @@ import { createRichEmbed } from './coomon/createRichEmbed';
 // Bot compontents
 import { initScheduler } from './scheduler';
 
-
 // Create an instance of a Discord client
 const client = new Discord.Client();
 // create a logger instance
 const logger = new Logger('../logs', logLevels.error, true);
 
 /* 
-
 Bot intention:
+
 Support a single Discord guild/server on getting alerts
 
 Notes:
@@ -42,8 +41,8 @@ client.login(botToken);
 client.on('ready', () => {
     // This event fires on being connected to the Discord 
 
-    // On READY, we should set a scheduler to check for alerts
-    initScheduler(client);
+    // On READY, set a scheduler to check for alerts
+    initScheduler(client, logger);
 
     logger.info(`Connected to Discord.\nLogged in as ${client.user.username} (${client.user.id})`);
     client.user.setActivity(`Serving ${client.guilds.size} servers`);
