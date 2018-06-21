@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import * as request from 'request-promise';
+import * as fs from 'fs'
 import Logger from 'colorful-log-levels';
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
 
@@ -15,8 +16,10 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
         .then((results: string) => {
             let discordChannel: any = client.channels.get(alertChannel);
             let warframeJSON = JSON.parse(results);
-            console.log(warframeJSON);
-            discordChannel.send(`Warframe manifest is ${results.length} bytes`);
+            // console.log(warframeJSON);
+            // JSON.stringify(warframeJSON, null, 2)
+            fs.writeFileSync('wfData.json', results);
+            discordChannel.send(`Wrote the file as 'wfData.json`);
         })
         .catch((err) => {
             logger.error(err);
