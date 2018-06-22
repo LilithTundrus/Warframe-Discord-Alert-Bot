@@ -18,7 +18,7 @@
   "homepage": "https://github.com/LilithTundrus/Warframe-Discord-Alert-Bot#readme",
   "dependencies": {
     "@types/node": "^10.3.4",
-    "colorful-log-levels": "^0.2.0",
+    "colorful-log-levels": "^0.2.1",
     "discord-paginationembed": "github:gazmull/discord-paginationembed",
     "discord.js": "^11.3.2",
     "request": "^2.87.0",
