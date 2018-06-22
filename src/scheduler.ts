@@ -8,7 +8,7 @@ import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config
 export function initScheduler(client: Discord.Client, logger: Logger) {
     setInterval(() => {
         checkForAlertUpdates(client, logger);
-    }, 10000);
+    }, 20000);
 }
 
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
@@ -16,13 +16,13 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
         .then((results: string) => {
             let previousWFData = fs.readFileSync('wfData.json').toString();
             let previousWFJSON = JSON.parse(previousWFData)
-            
+
             let discordChannel: any = client.channels.get(alertChannel);
             let currentWFJSON = JSON.parse(results);
             // Write something so we always have something to read moving forward
-            // fs.writeFileSync('wfData.json', results);
 
 
+            // TODO: handle the reads/write properly
             // Compare the alerts
             let previousAlerts = previousWFJSON.Alerts;
             let currentAllerts = currentWFJSON.Alerts;
@@ -31,7 +31,14 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
             console.log('\n\n\n\n\n')
             console.log(currentAllerts)
 
-            discordChannel.send(`Refreshed the JSON manifest`);
+            if (previousAlerts !== currentAllerts) {
+                discordChannel.send(`Manifest has a new alert entry!`);
+            }
+
+            // This gets written after a message is sent so current data -> previous file
+            // For the next check
+            fs.writeFileSync('wfData.json', results);
+
         })
         .catch((err) => {
             logger.error(err);
