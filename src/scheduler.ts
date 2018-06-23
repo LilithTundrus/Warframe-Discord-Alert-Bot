@@ -78,22 +78,46 @@ function cleanAlertData(baseAlert: warframeAlert) {
         nightmare: 'yes/no',
         archwing: 'yes/no',
     };
-    let timeLeft = baseAlert.Activation.$date.$numberLong - baseAlert.Expiry.$date.$numberLong
-    cleanedAlert.timeRemaining = msToTime(timeLeft);
+    // let timeLeft = baseAlert.Activation.$date.$numberLong - baseAlert.Expiry.$date.$numberLong
+    // let timeLeft = baseAlert.Expiry.$date.$numberLong
+    console.log(baseAlert.Activation.$date.$numberLong, baseAlert.Expiry.$date.$numberLong)
+
+
+    let expireDate = convertToDate(baseAlert.Expiry.$date.$numberLong);
+    console.log(expireDate)
+    console.log(new Date().getTime())
+    var seconds = (expireDate.getTime() - new Date().getTime()) / 1000;
+    console.log(seconds.toString())
+
+
+
+    // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
     return cleanedAlert;
 }
 
-function msToTime(duration: any) {
-    let parsedDuration = parseInt(duration);
-    let milliseconds = (parsedDuration % 1000) / 100;
+// Convert unix long dates to hours + minutes + seconds
+// function msToTime(milliseconds) {
+//     let date = new Date(milliseconds);
 
-    let seconds: any = (parsedDuration / 1000) % 60
-    let minutes: any = (parsedDuration / (1000 * 60)) % 60
-    let hours: any = (parsedDuration / (1000 * 60 * 60)) % 24;
+//     let h = date.getHours();
+//     let m = date.getMinutes();
+//     let s = date.getSeconds();
 
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    return hours + " hrs: " + minutes + " mins: " + seconds + "." + milliseconds + ' seconds';
+//     return `${h} hrs: ${m} mins: ${s} seconds`;
+// };
+
+function convertToDate(unixLong) {
+    unixLong = parseInt(unixLong);
+
+    if (isNaN(unixLong)) {
+        return null;
+    } else {
+        if (unixLong <= 9999999999) {
+            unixLong *= 1000;
+        }
+        var date = new Date(unixLong);
+        return date;
+    }
+
 }
