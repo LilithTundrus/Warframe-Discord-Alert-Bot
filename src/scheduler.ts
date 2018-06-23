@@ -35,7 +35,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
-                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert.start}`);
+                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert.timeRemaining}`);
                 }
             }
 
@@ -78,8 +78,22 @@ function cleanAlertData(baseAlert: warframeAlert) {
         nightmare: 'yes/no',
         archwing: 'yes/no',
     };
-    cleanedAlert.start = new Date(baseAlert.Activation.$date.$numberLong).toUTCString();
-
+    let timeLeft = baseAlert.Activation.$date.$numberLong - baseAlert.Expiry.$date.$numberLong
+    cleanedAlert.timeRemaining = msToTime(timeLeft);
 
     return cleanedAlert;
+}
+
+function msToTime(duration: any) {
+    let parsedDuration = parseInt(duration);
+    let milliseconds = (parsedDuration % 1000) / 100;
+
+    let seconds: any = (parsedDuration / 1000) % 60
+    let minutes: any = (parsedDuration / (1000 * 60)) % 60
+    let hours: any = (parsedDuration / (1000 * 60 * 60)) % 24;
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    return hours + " hrs: " + minutes + " mins: " + seconds + "." + milliseconds + ' seconds';
 }

@@ -32,7 +32,7 @@ export interface itemReward {
 }
 
 export interface alertTimeObject {
-    '$numberLong': string
+    '$numberLong': any
 }
 
 export interface cleanedAlert {
