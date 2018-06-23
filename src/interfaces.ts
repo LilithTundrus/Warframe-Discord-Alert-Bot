@@ -18,13 +18,11 @@ export interface warframeAlert {
     }
 }
 
-
 export interface missionReward {
     credits: number,
     items?: string[],
     countedItems?: itemReward[]
 }
-
 
 export interface itemReward {
     ItemType: string,
@@ -34,4 +32,3 @@ export interface itemReward {
 export interface alertTimeObject {
     '$numberLong': string
 }
-

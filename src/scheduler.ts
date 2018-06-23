@@ -25,17 +25,19 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
             let previousAlerts: warframeAlert[] = previousWFJSON.Alerts;
             let currentAlerts: warframeAlert[] = currentWFJSON.Alerts;
 
-            for (let alerts of currentAlerts) {
-                console.log(alerts.Activation.$date.$numberLong)
-
-            }
-
-            // TODO: find a better comparison method
-            // Comparing the lengths since this is the easiest way to tell that data has changed
-            if (previousAlerts.length !== currentAlerts.length) {
-                logger.debug('Alerts have changed');
-                let discordChannel: any = client.channels.get(alertChannel);
-                discordChannel.send(`Manifest has a new alert entry!`);
+            // Check the previous array for the IDs of each entry
+            // If a match is not found the item is new
+            for (let alert of currentAlerts) {
+                let matchedAlert = checkPreviousWarframeAlertsForGivenID(alert._id.$oid, previousAlerts);
+                if (!matchedAlert) {
+                    // The alert is new since the last check
+                    console.log('New Alert:', alert)
+                    // Now we need to see if we actually care about the item
+                    // Start crafting a message
+                    logger.debug('Alerts have changed');
+                    let discordChannel: any = client.channels.get(alertChannel);
+                    discordChannel.send(`Manifest has a new alert entry!`);
+                }
             }
 
             // This gets written after a message is sent so current data -> previous file
@@ -52,4 +54,16 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
             let discordChannel: any = client.channels.get(alertChannel);
             discordChannel.send(`${admin}, something went wrong: ${err}`);
         });
+}
+
+// Check if a warframe alert ID is in the passed array of alerts
+function checkPreviousWarframeAlertsForGivenID(alertID: string, alertsToCheck: warframeAlert[]) {
+    return alertsToCheck.find(alert => {
+        return alert._id.$oid == alertID;
+    });
+}
+
+// Clean the alert data to a more easily workable function
+function cleanAlertData() {
+
 }
