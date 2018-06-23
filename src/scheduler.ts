@@ -32,12 +32,10 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                 if (!matchedAlert) {
                     // The alert is new since the last check
                     let formattedAlert = cleanAlertData(alert);
-                    // Debugging
-                    console.log('New Alert:', alert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
-                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert}`);
+                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert.start}`);
                 }
             }
 
@@ -77,7 +75,11 @@ function cleanAlertData(baseAlert: warframeAlert) {
         enemyLevelRange: 'X-X',
         credits: 'credit count',
         rewards: 'resolved rewards',
+        nightmare: 'yes/no',
+        archwing: 'yes/no',
     };
     cleanedAlert.start = new Date(baseAlert.Activation.$date.$numberLong).toUTCString();
+
+
     return cleanedAlert;
 }

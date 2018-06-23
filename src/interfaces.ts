@@ -14,7 +14,9 @@ export interface warframeAlert {
         difficulty: number,
         seed: number,
         maxWaveNum: number,
-        missionReward: missionReward
+        missionReward: missionReward,
+        nightmare?: string
+        archwing?: string
     }
 }
 
@@ -43,4 +45,6 @@ export interface cleanedAlert {
     enemyLevelRange: string,
     credits: string,
     rewards: string,
+    nightmare?: string
+    archwing?: string
 }
