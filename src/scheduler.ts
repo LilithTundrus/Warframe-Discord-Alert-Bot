@@ -3,7 +3,7 @@ import * as request from 'request-promise';
 import * as fs from 'fs'
 import Logger from 'colorful-log-levels';
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
-import { warframeAlert } from './interfaces'
+import { warframeAlert, cleanedAlert } from './interfaces'
 
 // This is the function that will handle getting the alerts on a set interval
 export function initScheduler(client: Discord.Client, logger: Logger) {
@@ -31,12 +31,13 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                 let matchedAlert = checkPreviousWarframeAlertsForGivenID(alert._id.$oid, previousAlerts);
                 if (!matchedAlert) {
                     // The alert is new since the last check
-                    console.log('New Alert:', alert)
-                    // Now we need to see if we actually care about the item
+                    let formattedAlert = cleanAlertData(alert);
+                    // Debugging
+                    console.log('New Alert:', alert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
-                    discordChannel.send(`Manifest has a new alert entry!`);
+                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert}`);
                 }
             }
 
@@ -64,6 +65,19 @@ function checkPreviousWarframeAlertsForGivenID(alertID: string, alertsToCheck: w
 }
 
 // Clean the alert data to a more easily workable function
-function cleanAlertData() {
-
+function cleanAlertData(baseAlert: warframeAlert) {
+    // Base variable to fill in and return
+    let cleanedAlert: cleanedAlert = {
+        start: 'READABLE DATE',
+        end: 'READABLE DATE',
+        timeRemaining: 'Time from now until end',
+        missionType: 'Actual Mission Name',
+        location: 'resolvedName',
+        faction: 'Proper faction Name',
+        enemyLevelRange: 'X-X',
+        credits: 'credit count',
+        rewards: 'resolved rewards',
+    };
+    cleanedAlert.start = new Date(baseAlert.Activation.$date.$numberLong).toUTCString();
+    return cleanedAlert;
 }

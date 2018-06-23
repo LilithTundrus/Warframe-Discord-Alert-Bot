@@ -32,3 +32,15 @@ export interface itemReward {
 export interface alertTimeObject {
     '$numberLong': string
 }
+
+export interface cleanedAlert {
+    start: string,
+    end: string,
+    timeRemaining: string,
+    missionType: string,
+    location: string,
+    faction: string,
+    enemyLevelRange: string,
+    credits: string,
+    rewards: string,
+}
