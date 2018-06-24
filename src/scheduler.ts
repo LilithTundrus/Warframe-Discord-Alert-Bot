@@ -35,7 +35,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
-                    discordChannel.send(`Manifest has a new alert entry: ${formattedAlert.timeRemaining}`);
+                    discordChannel.send(`Manifest has a new alert entry: ${JSON.stringify(formattedAlert, null, 2)}`);
                 }
             }
 
@@ -78,16 +78,17 @@ function cleanAlertData(baseAlert: warframeAlert) {
         nightmare: 'yes/no',
         archwing: 'yes/no',
     };
-    // let timeLeft = baseAlert.Activation.$date.$numberLong - baseAlert.Expiry.$date.$numberLong
-    // let timeLeft = baseAlert.Expiry.$date.$numberLong
     console.log(baseAlert.Activation.$date.$numberLong, baseAlert.Expiry.$date.$numberLong)
+    let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
+    let newDate = formatDate(startDate);
 
+    // cleanedAlert.start = newDate
 
-    let expireDate = convertToDate(baseAlert.Expiry.$date.$numberLong);
-    console.log(expireDate)
-    console.log(new Date().getTime())
-    var seconds = (expireDate.getTime() - new Date().getTime()) / 1000;
-    console.log(seconds.toString())
+    // let expireDate = convertToDate(baseAlert.Expiry.$date.$numberLong);
+    // console.log(expireDate)
+    // console.log(new Date().getTime())
+    // var seconds = (expireDate.getTime() - new Date().getTime()) / 1000;
+    // console.log(seconds.toString())
 
 
 
@@ -119,5 +120,41 @@ function convertToDate(unixLong) {
         var date = new Date(unixLong);
         return date;
     }
-
 }
+
+function prettyDate(time){
+    var date = new Date(parseInt(time));
+    var localeSpecificTime = date.toLocaleTimeString();
+    return localeSpecificTime.replace(/:\d+ /, ' ');
+}
+
+function formatDate(date) {
+    var d = new Date(date);
+    var hh = d.getHours();
+    var m: any = d.getMinutes();
+    var s: any = d.getSeconds();
+    var dd = "AM";
+    var h = hh;
+    if (h >= 12) {
+      h = hh - 12;
+      dd = "PM";
+    }
+    if (h == 0) {
+      h = 12;
+    }
+    m = m < 10 ? "0" + m : m;
+  
+    s = s < 10 ? "0" + s : s;
+  
+    /* if you want 2 digit hours:
+    h = h<10?"0"+h:h; */
+  
+    var pattern = new RegExp("0?" + hh + ":" + m + ":" + s);
+  
+    var replacement = h + ":" + m;
+    /* if you want to add seconds
+    replacement += ":"+s;  */
+    replacement += " " + dd;
+  
+    return date.replace(pattern, replacement);
+  }
