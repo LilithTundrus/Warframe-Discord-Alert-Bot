@@ -45,6 +45,6 @@ export interface cleanedAlert {
     enemyLevelRange: string,
     credits: string,
     rewards: string,
-    nightmare?: string
+    nightmare?: string,
     archwing?: string
 }

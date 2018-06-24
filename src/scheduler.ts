@@ -11,7 +11,10 @@ const solNodes = fs.readFileSync('./data/solNode.json', 'utf-8');
 const solNodeJSON = JSON.parse(solNodes);
 
 const missionTypes = fs.readFileSync('./data/missionTypes.json', 'utf-8');
-const missionTypesJSON = JSON.parse(missionTypes);
+const missionTypeJSON = JSON.parse(missionTypes);
+
+const factionTypes = fs.readFileSync('./data/factions.json', 'utf-8');
+const factionTypeJSON = JSON.parse(factionTypes);
 
 
 // This is the function that will handle getting the alerts on a set interval
@@ -102,10 +105,21 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // Assign the cleaned object missionType property a readable value
     if (missionType !== null) cleanedAlert.missionType = missionType;
     // Else, just leave the missionType as-is so something is still returned
-    else cleanedAlert.missionType = baseAlert.MissionInfo.missionType
+    else cleanedAlert.missionType = baseAlert.MissionInfo.missionType;
+
+    // get the faction type string
+    let factionType = resolveFactionType(baseAlert.MissionInfo.faction);
+    // Assign the cleaned object factionType property a readable value
+    if (missionType !== null) cleanedAlert.faction = factionType;
+    // Else, just leave the missionType as-is so something is still returned
+    else cleanedAlert.missionType = baseAlert.MissionInfo.faction;
 
     // Set the enemy level range properly
     cleanedAlert.enemyLevelRange = `${baseAlert.MissionInfo.minEnemyLevel}-${baseAlert.MissionInfo.maxEnemyLevel}`;
+
+    // Get the credit count
+    cleanedAlert.credits = baseAlert.MissionInfo.missionReward.credits.toString();
+
 
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
@@ -131,9 +145,23 @@ function resolveSolNode(solNode: string) {
  * @returns string | null
  */
 function resolveMissionType(rawMission: string) {
-    if (missionTypesJSON[rawMission]) {
+    if (missionTypeJSON[rawMission]) {
         // Return the readable value
-        return missionTypesJSON[rawMission].value;
+        return missionTypeJSON[rawMission].value;
+    } else {
+        // No solNode could be found
+        return null;
+    }
+}
+
+/** Resolve a Warframe faction type by its raw faction string
+ * @param {string} rawFaction The raw faction string pulled from the worlState
+ * @returns string | null
+ */
+function resolveFactionType(rawFaction: string) {
+    if (factionTypeJSON[rawFaction]) {
+        // Return the readable value
+        return factionTypeJSON[rawFaction].value;
     } else {
         // No solNode could be found
         return null;
