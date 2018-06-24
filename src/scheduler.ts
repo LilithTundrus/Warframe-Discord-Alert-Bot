@@ -5,6 +5,12 @@ import Logger from 'colorful-log-levels';
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
 import { warframeAlert, cleanedAlert } from './interfaces'
 
+// Global files that contain solNode and mission-type data
+
+const solNodes = fs.readFileSync('./data/solNode.json', 'utf-8');
+const solNodeJSON = JSON.parse(solNodes);
+
+
 // This is the function that will handle getting the alerts on a set interval
 export function initScheduler(client: Discord.Client, logger: Logger) {
     setInterval(() => {
@@ -91,6 +97,14 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // console.log(seconds.toString())
 
 
+    // Get the location string for the Alert
+    if(solNodeJSON[baseAlert.MissionInfo.location]) {
+        // Set the location to a readable value
+        cleanedAlert.location = solNodeJSON[baseAlert.MissionInfo.location].value;
+    } else {
+        // Leave the solNode as-is
+        cleanedAlert.location = baseAlert.MissionInfo.location;
+    }
 
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
@@ -122,7 +136,7 @@ function convertToDate(unixLong) {
     }
 }
 
-function prettyDate(time){
+function prettyDate(time) {
     var date = new Date(parseInt(time));
     var localeSpecificTime = date.toLocaleTimeString();
     return localeSpecificTime.replace(/:\d+ /, ' ');
@@ -136,25 +150,25 @@ function formatDate(date) {
     var dd = "AM";
     var h = hh;
     if (h >= 12) {
-      h = hh - 12;
-      dd = "PM";
+        h = hh - 12;
+        dd = "PM";
     }
     if (h == 0) {
-      h = 12;
+        h = 12;
     }
     m = m < 10 ? "0" + m : m;
-  
+
     s = s < 10 ? "0" + s : s;
-  
+
     /* if you want 2 digit hours:
     h = h<10?"0"+h:h; */
-  
+
     var pattern = new RegExp("0?" + hh + ":" + m + ":" + s);
-  
+
     var replacement = h + ":" + m;
     /* if you want to add seconds
     replacement += ":"+s;  */
     replacement += " " + dd;
-  
+
     return date.replace(pattern, replacement);
-  }
+}
