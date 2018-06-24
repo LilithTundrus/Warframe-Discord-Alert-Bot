@@ -10,6 +10,9 @@ import { warframeAlert, cleanedAlert } from './interfaces'
 const solNodes = fs.readFileSync('./data/solNode.json', 'utf-8');
 const solNodeJSON = JSON.parse(solNodes);
 
+const missionTypes = fs.readFileSync('./data/missionTypes.json', 'utf-8');
+const missionTypesJSON = JSON.parse(missionTypes);
+
 
 // This is the function that will handle getting the alerts on a set interval
 export function initScheduler(client: Discord.Client, logger: Logger) {
@@ -71,19 +74,10 @@ function checkPreviousWarframeAlertsForGivenID(alertID: string, alertsToCheck: w
 // Clean the alert data to a more easily workable function
 function cleanAlertData(baseAlert: warframeAlert) {
     // Base variable to fill in and return
-    let cleanedAlert: cleanedAlert = {
-        start: 'READABLE DATE',
-        end: 'READABLE DATE',
-        timeRemaining: 'Time from now until end',
-        missionType: 'Actual Mission Name',
-        location: 'resolvedName',
-        faction: 'Proper faction Name',
-        enemyLevelRange: 'X-X',
-        credits: 'credit count',
-        rewards: 'resolved rewards',
-        nightmare: 'yes/no',
-        archwing: 'yes/no',
-    };
+    let cleanedAlert = <cleanedAlert>{};
+
+    console.log(baseAlert)
+
     console.log(baseAlert.Activation.$date.$numberLong, baseAlert.Expiry.$date.$numberLong)
     let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
     let newDate = formatDate(startDate);
@@ -96,19 +90,54 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // var seconds = (expireDate.getTime() - new Date().getTime()) / 1000;
     // console.log(seconds.toString())
 
-
     // Get the location string for the Alert
-    if(solNodeJSON[baseAlert.MissionInfo.location]) {
-        // Set the location to a readable value
-        cleanedAlert.location = solNodeJSON[baseAlert.MissionInfo.location].value;
-    } else {
-        // Leave the solNode as-is
-        cleanedAlert.location = baseAlert.MissionInfo.location;
-    }
+    let location = resolveSolNode(baseAlert.MissionInfo.location);
+    // Assign the cleaned object location property a readable value
+    if (location !== null) cleanedAlert.location = location;
+    // Else, just leave it alone
+    else cleanedAlert.location = baseAlert.MissionInfo.location;
+
+    // Get the mission type string
+    let missionType = resolveMissionType(baseAlert.MissionInfo.missionType);
+    // Assign the cleaned object missionType property a readable value
+    if (missionType !== null) cleanedAlert.missionType = missionType;
+    // Else, just leave the missionType as-is so something is still returned
+    else cleanedAlert.missionType = baseAlert.MissionInfo.missionType
+
+    // Set the enemy level range properly
+    cleanedAlert.enemyLevelRange = `${baseAlert.MissionInfo.minEnemyLevel}-${baseAlert.MissionInfo.maxEnemyLevel}`;
 
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
     return cleanedAlert;
+}
+
+/** Resolve a Warframe solNode value by solNode ID
+ * @param {string} solNode String to match the global solNode JSON set to
+ * @returns string | null
+ */
+function resolveSolNode(solNode: string) {
+    if (solNodeJSON[solNode]) {
+        // Return the readable value
+        return solNodeJSON[solNode].value;
+    } else {
+        // No solNode could be found
+        return null;
+    }
+}
+
+/** Resolve a Warframe mission type by its raw mission string
+ * @param {string} rawMission The raw mission string pulled from the worlState
+ * @returns string | null
+ */
+function resolveMissionType(rawMission: string) {
+    if (missionTypesJSON[rawMission]) {
+        // Return the readable value
+        return missionTypesJSON[rawMission].value;
+    } else {
+        // No solNode could be found
+        return null;
+    }
 }
 
 // Convert unix long dates to hours + minutes + seconds
