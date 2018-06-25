@@ -55,22 +55,55 @@ export function resolveFactionType(rawFaction: string) {
     }
 }
 
-export function cleanCountedAlerts(alertItems: itemReward[]) {
-    let rewardString: string;
-    alertItems.forEach(reward => {
+export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
+    let rewardString: string = '';
+    countedAlertItems.forEach(reward => {
         let rewardType: string;
+
         // Clean the name
-        switch (reward.ItemType) {
-            case 'VoidTearDrop':
-                rewardType = 'Void Traces';
-                break;
-            case 'ArgonCrystal':
-                rewardType = 'Argon Crystal';
-                break;
-
-            default:
-
-                break;
+        if (reward.ItemType.includes('VoidTearDrop')) {
+            rewardType = 'Void Traces';
+        } else if (reward.ItemType.includes('ArgonCrystal')) {
+            rewardType = 'Argon Crytsal';
+        } else if (reward.ItemType.includes('Neurode')) {
+            rewardType = 'Neurodes';
+        } else if (reward.ItemType.includes('Alertium')) {
+            rewardType = 'Nitain';
+        } else if (reward.ItemType.includes('OxiumAlloy')) {
+            rewardType = 'Oxium';
+        } else if (reward.ItemType.includes('Tellurium')) {
+            rewardType = 'Tellurium';
+        } else if (reward.ItemType.includes('NeuralSensor')) {
+            rewardType = 'Neural Sensor';
+        } else if (reward.ItemType.includes('Ferrite')) {
+            rewardType = 'Ferrite';
+        } else if (reward.ItemType.includes('AlertFusionBundleSmall')) {
+            rewardType = 'Endo - Small';
+        } else if (reward.ItemType.includes('AlertFusionBundleMedium')) {
+            rewardType = 'Endo - Medium';
+        } else if (reward.ItemType.includes('AlertFusionBundleLarge')) {
+            rewardType = 'Endo - Large';
+        } else {
+            // An item type we haven't yet handled
+            let rewardNameStartIndex = reward.ItemType.lastIndexOf('/') + 1;
+            rewardType = reward.ItemType.substring(rewardNameStartIndex);
         }
+
+        rewardString = rewardString + `${reward.ItemCount} ${rewardType}\n`;
     });
+    // Return the string of alert items
+    return rewardString;
+}
+
+export function cleanAlertItems(alertItems: string[]) {
+    let rewardString: string = '';
+    alertItems.forEach(reward => {
+        let rewardNameStartIndex = reward.lastIndexOf('/') + 1;
+        let parsedReward = reward.substring(rewardNameStartIndex);
+        let cleanedReward = parsedReward.replace(/([A-Z])/g, ' $1').trim();
+        rewardString = rewardString + cleanedReward;
+    });
+
+    // Return the string of alert items
+    return rewardString;
 }

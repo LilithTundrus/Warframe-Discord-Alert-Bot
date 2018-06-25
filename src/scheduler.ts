@@ -7,7 +7,11 @@ import * as fs from 'fs';
 // Custom/local config and function imports
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
 import { warframeAlert, cleanedAlert } from './interfaces';
-import { resolveFactionType, resolveMissionType, resolveSolNode } from './alertFunctions';
+import {
+    resolveFactionType, resolveMissionType,
+    resolveSolNode, cleanCountedAlerts,
+    cleanAlertItems
+} from './alertFunctions';
 
 // This is the function that will handle getting the alerts on a set interval
 export function initScheduler(client: Discord.Client, logger: Logger) {
@@ -73,8 +77,6 @@ function cleanAlertData(baseAlert: warframeAlert) {
     cleanedAlert.rewards = '';
 
     console.log(baseAlert.MissionInfo);
-
-    console.log(baseAlert.Activation.$date.$numberLong, baseAlert.Expiry.$date.$numberLong)
     let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
     let newDate = formatDate(startDate);
 
@@ -115,18 +117,12 @@ function cleanAlertData(baseAlert: warframeAlert) {
 
     // Get and set the counted rewards
     if (baseAlert.MissionInfo.missionReward.countedItems) {
-        baseAlert.MissionInfo.missionReward.countedItems.forEach((reward) => {
-            // Clean the reward's name
-            cleanedAlert.rewards = cleanedAlert.rewards + `Item: ${reward.ItemType}\tCount: ${reward.ItemCount}\n`;
-        });
+        cleanedAlert.rewards = cleanCountedAlerts(baseAlert.MissionInfo.missionReward.countedItems);
     }
 
     // Get and set the rewards
     if (baseAlert.MissionInfo.missionReward.items) {
-        baseAlert.MissionInfo.missionReward.items.forEach((reward) => {
-            // Try and clean the reward
-            cleanedAlert.rewards = cleanedAlert.rewards + `${reward}\n`;
-        });
+        cleanedAlert.rewards = cleanedAlert.rewards + cleanAlertItems(baseAlert.MissionInfo.missionReward.items);
     }
 
     // Make sure we mark the alert as Arhcwing if needed
@@ -143,8 +139,6 @@ function cleanAlertData(baseAlert: warframeAlert) {
 
     return cleanedAlert;
 }
-
-
 
 // Convert unix long dates to hours + minutes + seconds
 // function msToTime(milliseconds) {
