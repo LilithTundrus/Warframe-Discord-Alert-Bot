@@ -121,17 +121,30 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // Set the credit count
     cleanedAlert.credits = baseAlert.MissionInfo.missionReward.credits.toString();
 
-    // Get and set the rewards
+    // Get and set the counted rewards
     if (baseAlert.MissionInfo.missionReward.countedItems) {
         baseAlert.MissionInfo.missionReward.countedItems.forEach((reward) => {
+            // Clean the reward's name
             cleanedAlert.rewards = cleanedAlert.rewards + `Item: ${reward.ItemType}\tCount: ${reward.ItemCount}\n`;
         });
     }
 
+    // Get and set the rewards
     if (baseAlert.MissionInfo.missionReward.items) {
         baseAlert.MissionInfo.missionReward.items.forEach((reward) => {
+            // Try and clean the reward
             cleanedAlert.rewards = cleanedAlert.rewards + `${reward}\n`;
         });
+    }
+
+    // Make sure we mark the alert as Arhcwing if needed
+    if (baseAlert.MissionInfo.archwing) {
+        cleanedAlert.archwing = 'Yes';
+    }
+
+    // Mark the alert as nightmare if the base alert has it
+    if (baseAlert.MissionInfo.nightmare) {
+        cleanedAlert.nightmare = 'Yes';
     }
 
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
