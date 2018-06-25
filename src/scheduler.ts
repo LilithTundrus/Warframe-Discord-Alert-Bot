@@ -78,8 +78,9 @@ function checkPreviousWarframeAlertsForGivenID(alertID: string, alertsToCheck: w
 function cleanAlertData(baseAlert: warframeAlert) {
     // Base variable to fill in and return
     let cleanedAlert = <cleanedAlert>{};
+    cleanedAlert.rewards = '';
 
-    console.log(baseAlert)
+    console.log(baseAlert.MissionInfo);
 
     console.log(baseAlert.Activation.$date.$numberLong, baseAlert.Expiry.$date.$numberLong)
     let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
@@ -117,9 +118,21 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // Set the enemy level range properly
     cleanedAlert.enemyLevelRange = `${baseAlert.MissionInfo.minEnemyLevel}-${baseAlert.MissionInfo.maxEnemyLevel}`;
 
-    // Get the credit count
+    // Set the credit count
     cleanedAlert.credits = baseAlert.MissionInfo.missionReward.credits.toString();
 
+    // Get and set the rewards
+    if (baseAlert.MissionInfo.missionReward.countedItems) {
+        baseAlert.MissionInfo.missionReward.countedItems.forEach((reward) => {
+            cleanedAlert.rewards = cleanedAlert.rewards + `Item: ${reward.ItemType}\tCount: ${reward.ItemCount}\n`;
+        });
+    }
+
+    if (baseAlert.MissionInfo.missionReward.items) {
+        baseAlert.MissionInfo.missionReward.items.forEach((reward) => {
+            cleanedAlert.rewards = cleanedAlert.rewards + `${reward}\n`;
+        });
+    }
 
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
