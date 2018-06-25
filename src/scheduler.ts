@@ -1,21 +1,13 @@
+// NPM packages/built in node.js packages that are needed
 import * as Discord from 'discord.js';
 import * as request from 'request-promise';
-import * as fs from 'fs'
 import Logger from 'colorful-log-levels';
+import * as fs from 'fs';
+
+// Custom/local config and function imports
 import { alertChannel, warframeWorldsstateURL, guildID, adminID } from './config';
-import { warframeAlert, cleanedAlert } from './interfaces'
-
-// Global files that contain solNode and mission-type data
-
-const solNodes = fs.readFileSync('./data/solNode.json', 'utf-8');
-const solNodeJSON = JSON.parse(solNodes);
-
-const missionTypes = fs.readFileSync('./data/missionTypes.json', 'utf-8');
-const missionTypeJSON = JSON.parse(missionTypes);
-
-const factionTypes = fs.readFileSync('./data/factions.json', 'utf-8');
-const factionTypeJSON = JSON.parse(factionTypes);
-
+import { warframeAlert, cleanedAlert } from './interfaces';
+import { resolveFactionType, resolveMissionType, resolveSolNode } from './alertFunctions';
 
 // This is the function that will handle getting the alerts on a set interval
 export function initScheduler(client: Discord.Client, logger: Logger) {
@@ -152,47 +144,7 @@ function cleanAlertData(baseAlert: warframeAlert) {
     return cleanedAlert;
 }
 
-/** Resolve a Warframe solNode value by solNode ID
- * @param {string} solNode String to match the global solNode JSON set to
- * @returns string | null
- */
-function resolveSolNode(solNode: string) {
-    if (solNodeJSON[solNode]) {
-        // Return the readable value
-        return solNodeJSON[solNode].value;
-    } else {
-        // No solNode could be found
-        return null;
-    }
-}
 
-/** Resolve a Warframe mission type by its raw mission string
- * @param {string} rawMission The raw mission string pulled from the worlState
- * @returns string | null
- */
-function resolveMissionType(rawMission: string) {
-    if (missionTypeJSON[rawMission]) {
-        // Return the readable value
-        return missionTypeJSON[rawMission].value;
-    } else {
-        // No solNode could be found
-        return null;
-    }
-}
-
-/** Resolve a Warframe faction type by its raw faction string
- * @param {string} rawFaction The raw faction string pulled from the worlState
- * @returns string | null
- */
-function resolveFactionType(rawFaction: string) {
-    if (factionTypeJSON[rawFaction]) {
-        // Return the readable value
-        return factionTypeJSON[rawFaction].value;
-    } else {
-        // No solNode could be found
-        return null;
-    }
-}
 
 // Convert unix long dates to hours + minutes + seconds
 // function msToTime(milliseconds) {

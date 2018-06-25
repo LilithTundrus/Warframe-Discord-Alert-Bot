@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { warframeAlert, cleanedAlert } from './interfaces'
+import { itemReward } from './interfaces';
 
 // Global files that contain solNode and mission-type data
 
@@ -53,4 +53,24 @@ export function resolveFactionType(rawFaction: string) {
         // No solNode could be found
         return null;
     }
+}
+
+export function cleanCountedAlerts(alertItems: itemReward[]) {
+    let rewardString: string;
+    alertItems.forEach(reward => {
+        let rewardType: string;
+        // Clean the name
+        switch (reward.ItemType) {
+            case 'VoidTearDrop':
+                rewardType = 'Void Traces';
+                break;
+            case 'ArgonCrystal':
+                rewardType = 'Argon Crystal';
+                break;
+
+            default:
+
+                break;
+        }
+    });
 }
