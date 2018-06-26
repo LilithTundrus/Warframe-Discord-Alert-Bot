@@ -77,12 +77,6 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
             rewardType = 'Neural Sensor';
         } else if (reward.ItemType.includes('Ferrite')) {
             rewardType = 'Ferrite';
-        } else if (reward.ItemType.includes('AlertFusionBundleSmall')) {
-            rewardType = 'Endo - Small';
-        } else if (reward.ItemType.includes('AlertFusionBundleMedium')) {
-            rewardType = 'Endo - Medium';
-        } else if (reward.ItemType.includes('AlertFusionBundleLarge')) {
-            rewardType = 'Endo - Large';
         } else {
             // An item type we haven't yet handled
             let rewardNameStartIndex = reward.ItemType.lastIndexOf('/') + 1;
@@ -98,10 +92,20 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
 export function cleanAlertItems(alertItems: string[]) {
     let rewardString: string = '';
     alertItems.forEach(reward => {
+
         let rewardNameStartIndex = reward.lastIndexOf('/') + 1;
         let parsedReward = reward.substring(rewardNameStartIndex);
         let cleanedReward = parsedReward.replace(/([A-Z])/g, ' $1').trim();
-        rewardString = rewardString + cleanedReward;
+
+                // TODO: figure out why this is not working
+            if (cleanedReward.includes('Bundle Small')) {
+                cleanedReward = 'Endo - Small';
+            } else if (cleanedReward.includes('Bundle Medium')) {
+                cleanedReward = 'Endo - Medium';
+            } else if (cleanedReward.includes('Bundle Large')) {
+                cleanedReward = 'Endo - Large';
+            }
+            rewardString = rewardString + cleanedReward;
     });
 
     // Return the string of alert items
