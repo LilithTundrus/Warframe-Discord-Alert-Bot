@@ -1,4 +1,4 @@
-// NPM packages/built in node.js packages that are needed
+// Node/NPM imports
 import * as Discord from 'discord.js';
 import * as request from 'request-promise';
 import Logger from 'colorful-log-levels';
@@ -43,6 +43,9 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
+
+                    // This is where we would call a formatting function
+                    let message = createAlertMessage(formattedAlert);
                     discordChannel.send(`Manifest has a new alert entry: ${JSON.stringify(formattedAlert, null, 2)}`);
                 }
             }
@@ -138,6 +141,16 @@ function cleanAlertData(baseAlert: warframeAlert) {
     // cleanedAlert.timeRemaining = convertToDate(timeLeft);
 
     return cleanedAlert;
+}
+
+function createAlertMessage(alertData: cleanedAlert) {
+    // Create a Discord RichEmbed  and return it
+    // return formattedAlerData;
+    let embedPage = new Discord.RichEmbed();
+
+    embedPage.addField('Location', alertData.location);
+    embedPage.addField('Faction', alertData.faction);
+    embedPage.addField('Rewards', alertData.rewards);
 }
 
 // Convert unix long dates to hours + minutes + seconds

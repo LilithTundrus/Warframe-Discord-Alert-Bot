@@ -1,4 +1,7 @@
+// Node imports 
 import * as fs from 'fs';
+
+// Custom imports
 import { itemReward } from './interfaces';
 
 // Global files that contain solNode and mission-type data
@@ -92,20 +95,23 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
 export function cleanAlertItems(alertItems: string[]) {
     let rewardString: string = '';
     alertItems.forEach(reward => {
+        // Get rid of the extra parts of the string
 
+        // Warframe item data looks like this: '/Lotus/StoreItems/Upgrades/Mods/FusionBundles/AlertFusionBundleSmall'
+        // and we only want the last part of that
         let rewardNameStartIndex = reward.lastIndexOf('/') + 1;
         let parsedReward = reward.substring(rewardNameStartIndex);
+        // Add spaces in betwen the capital letters
         let cleanedReward = parsedReward.replace(/([A-Z])/g, ' $1').trim();
-
-                // TODO: figure out why this is not working
-            if (cleanedReward.includes('Bundle Small')) {
-                cleanedReward = 'Endo - Small';
-            } else if (cleanedReward.includes('Bundle Medium')) {
-                cleanedReward = 'Endo - Medium';
-            } else if (cleanedReward.includes('Bundle Large')) {
-                cleanedReward = 'Endo - Large';
-            }
-            rewardString = rewardString + cleanedReward;
+        // Eventually we'll handle more edge cases here
+        if (cleanedReward.includes('Bundle Small')) {
+            cleanedReward = 'Endo - Small';
+        } else if (cleanedReward.includes('Bundle Medium')) {
+            cleanedReward = 'Endo - Medium';
+        } else if (cleanedReward.includes('Bundle Large')) {
+            cleanedReward = 'Endo - Large';
+        }
+        rewardString = rewardString + cleanedReward;
     });
 
     // Return the string of alert items
