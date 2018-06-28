@@ -46,7 +46,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
 
                     // This is where we would call a formatting function
                     let message = createAlertMessage(formattedAlert);
-                    discordChannel.send(`Manifest has a new alert entry: ${JSON.stringify(formattedAlert, null, 2)}`);
+                    discordChannel.send(message);
                 }
             }
 
@@ -148,9 +148,14 @@ function createAlertMessage(alertData: cleanedAlert) {
     // return formattedAlerData;
     let embedPage = new Discord.RichEmbed();
 
-    embedPage.addField('Location', alertData.location);
-    embedPage.addField('Faction', alertData.faction);
-    embedPage.addField('Rewards', alertData.rewards);
+    embedPage.setTitle('Alert:');
+    //     embedPage.addField('Location', alertData.location, true);
+
+    embedPage.addField('Location', "AAAAAA", true);
+    // embedPage.addField('Faction', alertData.faction, true);
+    // embedPage.addField('Rewards', alertData.rewards, true);
+
+    return embedPage;
 }
 
 // Convert unix long dates to hours + minutes + seconds
