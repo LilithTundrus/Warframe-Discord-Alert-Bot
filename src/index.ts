@@ -26,13 +26,22 @@ const logger = new Logger('../logs', logLevels.error, true);
 /* 
 Bot intention:
 
-Support a single Discord guild/server on getting alerts
+Support a single Discord guild/server on getting alerts for the game warframe
+
+The alert scheduler will @mention several roles depending on the importance/rewards
+that an alert drops
+
 
 Notes:
 
+This bot is really only made to support ONE server
+
+
 Assumptions made:
 
+This bot assumes the Wraframe worldstate page is up
 
+The bot also assumes the Discord API is up and working
 */
 
 // Log the bot in
@@ -41,7 +50,7 @@ client.login(botToken);
 client.on('ready', () => {
     // This event fires on being connected to the Discord 
 
-    // On READY, set a scheduler to check for alerts
+    // On ready, set a scheduler to check for new warframe alerts
     initScheduler(client, logger);
 
     logger.info(`Connected to Discord.\nLogged in as ${client.user.username} (${client.user.id})`);
@@ -61,14 +70,15 @@ client.on('guildDelete', guild => {
     client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
-// This event will run on every single message received, from any channel or DM.
 client.on('message', async message => {
+    // This event will run on every single message received, from any channel or DM
+
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     if (message.author.bot) return;
     // Also good practice to ignore any message that does not start with the bot'ss prefix, 
     if (message.content.indexOf(prefix) !== 0) return;
 
-    // Here we separate our 'command' name, and our 'arguments' for the command. 
+    // Here we separate the 'command' name, and the 'arguments' for the command.
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
