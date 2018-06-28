@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 
 // Custom imports
-import { itemReward } from './interfaces';
+import { itemReward, cleanedAlert } from './interfaces';
 
 // Global files that contain solNode and mission-type data
 
@@ -80,6 +80,8 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
             rewardType = 'Neural Sensor';
         } else if (reward.ItemType.includes('Ferrite')) {
             rewardType = 'Ferrite';
+        } else if (reward.ItemType.includes('ControlModule')) {
+            rewardType = 'Control Module';
         } else {
             // An item type we haven't yet handled
             let rewardNameStartIndex = reward.ItemType.lastIndexOf('/') + 1;
@@ -116,4 +118,11 @@ export function cleanAlertItems(alertItems: string[]) {
 
     // Return the string of alert items
     return rewardString;
+}
+
+// Function to determine who the bot should @ for certain alerts
+export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
+
+    
+
 }

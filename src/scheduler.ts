@@ -10,7 +10,7 @@ import { warframeAlert, cleanedAlert } from './interfaces';
 import {
     resolveFactionType, resolveMissionType,
     resolveSolNode, cleanCountedAlerts,
-    cleanAlertItems
+    cleanAlertItems, determineAlertRoleMention
 } from './alertFunctions';
 
 // This is the function that will handle getting the alerts on a set interval
@@ -23,6 +23,10 @@ export function initScheduler(client: Discord.Client, logger: Logger) {
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
     request.get(warframeWorldsstateURL)
         .then((results: string) => {
+            let guild = client.guilds.get(guildID);
+
+            console.log(guild.roles)
+
             // Read the old alert dataSet
             let previousWFData = fs.readFileSync('wfData.json').toString();
             let previousWFJSON = JSON.parse(previousWFData);
@@ -41,9 +45,11 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     // The alert is new since the last check
                     let formattedAlert = cleanAlertData(alert);
 
+                    // Determine which roles to @ 
                     let whoToAlert = determineAlertRoleMention(formattedAlert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
+
                     let discordChannel: any = client.channels.get(alertChannel);
 
                     // This is where we would call a formatting function
@@ -60,6 +66,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
             logger.error(err);
             // Get the guild to retrive the user for
             let guild = client.guilds.get(guildID);
+
             // Get the user object by ID
             let admin = guild.members.get(adminID);
             // Message the admin that something went wrong
@@ -153,18 +160,16 @@ function createAlertMessage(alertData: cleanedAlert) {
     embedPage.setTitle('Alert:');
     embedPage.addField('Location', alertData.location, true);
     embedPage.addField('Faction', alertData.faction, true);
+    embedPage.addField('Mission Type', alertData.missionType);
+    embedPage.addField('Enemy Level', alertData.enemyLevelRange, true);
     // Rewards are credits + any extra rewards
     embedPage.addField('Rewards', alertData.credits + ' Credits\n\n' + alertData.rewards, true);
     embedPage.setColor(3447003);
 
-
     return embedPage;
 }
 
-// Function to determine who the bot should @ for certain alerts
-function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
 
-}
 
 // Convert unix long dates to hours + minutes + seconds
 // function msToTime(milliseconds) {
