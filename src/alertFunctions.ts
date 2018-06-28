@@ -2,6 +2,7 @@
 import * as fs from 'fs';
 
 // Custom imports
+import { guildAlertRoleTest } from './config';
 import { itemReward, cleanedAlert } from './interfaces';
 
 // Global files that contain solNode and mission-type data
@@ -123,6 +124,7 @@ export function cleanAlertItems(alertItems: string[]) {
 // Function to determine who the bot should @ for certain alerts
 export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
 
-    
-
+    // if (cleanedAlert.rewards.includes('0')) {
+        return guildAlertRoleTest;
+    // }
 }

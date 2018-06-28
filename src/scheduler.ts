@@ -23,9 +23,9 @@ export function initScheduler(client: Discord.Client, logger: Logger) {
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
     request.get(warframeWorldsstateURL)
         .then((results: string) => {
-            let guild = client.guilds.get(guildID);
+            // let guild = client.guilds.get(guildID);
 
-            console.log(guild.roles)
+            // console.log(guild.roles)
 
             // Read the old alert dataSet
             let previousWFData = fs.readFileSync('wfData.json').toString();
@@ -51,6 +51,8 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     logger.debug('Alerts have changed');
 
                     let discordChannel: any = client.channels.get(alertChannel);
+
+                    discordChannel.send(`Hey <@${whoToAlert}>, there's an alert!`);
 
                     // This is where we would call a formatting function
                     let message = createAlertMessage(formattedAlert);
