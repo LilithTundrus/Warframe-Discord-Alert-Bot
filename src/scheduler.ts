@@ -40,6 +40,8 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                 if (!matchedAlert) {
                     // The alert is new since the last check
                     let formattedAlert = cleanAlertData(alert);
+
+                    let whoToAlert = determineAlertRoleMention(formattedAlert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
                     let discordChannel: any = client.channels.get(alertChannel);
@@ -149,13 +151,19 @@ function createAlertMessage(alertData: cleanedAlert) {
     let embedPage = new Discord.RichEmbed();
 
     embedPage.setTitle('Alert:');
-    //     embedPage.addField('Location', alertData.location, true);
+    embedPage.addField('Location', alertData.location, true);
+    embedPage.addField('Faction', alertData.faction, true);
+    // Rewards are credits + any extra rewards
+    embedPage.addField('Rewards', alertData.credits + ' Credits\n\n' + alertData.rewards, true);
+    embedPage.setColor(3447003);
 
-    embedPage.addField('Location', "AAAAAA", true);
-    // embedPage.addField('Faction', alertData.faction, true);
-    // embedPage.addField('Rewards', alertData.rewards, true);
 
     return embedPage;
+}
+
+// Function to determine who the bot should @ for certain alerts
+function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
+
 }
 
 // Convert unix long dates to hours + minutes + seconds
