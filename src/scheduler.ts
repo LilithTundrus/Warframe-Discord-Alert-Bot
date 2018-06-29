@@ -52,7 +52,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
 
                     let discordChannel: any = client.channels.get(alertChannel);
 
-                    discordChannel.send(`Hey <@${whoToAlert}>, there's an alert!`);
+                    discordChannel.send(`Hey <@&${whoToAlert}> there's an alert!`);
 
                     // This is where we would call a formatting function
                     let message = createAlertMessage(formattedAlert);
