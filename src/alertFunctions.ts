@@ -3,7 +3,10 @@ import * as fs from 'fs';
 const Items = require('warframe-items')
 
 // Custom imports
-import { guildAlertRoleTest, guildRoleIDNitainAlert } from './config';
+import {
+    guildRoleIDNitainAlert, guildRoleIDCatalyst,
+    guildRoleIDReactor, guildRoleIDForma
+} from './config';
 import { itemReward, cleanedAlert } from './interfaces';
 
 // Global files that contain solNode and mission-type data
@@ -110,17 +113,18 @@ export function cleanAlertItems(alertItems: string[]) {
 
 // Function to determine who the bot should @ for certain alerts
 export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
-
-    // TODO: handle when alerts don't match anything
     if (cleanedAlert.rewards.includes('Orokin Catalyst')) {
         // Return the catalyst role ID
-    }
-
-    if (cleanedAlert.rewards.includes('Nitain')) {
+    } else if (cleanedAlert.rewards.includes('Orokin Reactor')) {
+        // Return the nitain role ID
+        return guildRoleIDReactor;
+    } else if (cleanedAlert.rewards.includes('Nitain')) {
+        // Return the nitain role ID
         return guildRoleIDNitainAlert;
+    } else if (cleanedAlert.rewards.includes('Forma')) {
+        // Return the nitain role ID
+        return guildRoleIDForma;
     }
-
-    return guildAlertRoleTest;
 }
 
 function findWarframeItem(itemID: string) {

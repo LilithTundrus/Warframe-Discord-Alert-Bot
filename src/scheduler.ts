@@ -25,7 +25,7 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
         .then((results: string) => {
             let guild = client.guilds.get(guildID);
 
-            // console.log(guild.roles)
+            console.log(guild.roles)
 
             // Read the old alert dataSet
             let previousWFData = fs.readFileSync('wfData.json').toString();
