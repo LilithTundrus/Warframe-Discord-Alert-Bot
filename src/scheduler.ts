@@ -23,7 +23,7 @@ export function initScheduler(client: Discord.Client, logger: Logger) {
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
     request.get(warframeWorldsstateURL)
         .then((results: string) => {
-            // let guild = client.guilds.get(guildID);
+            let guild = client.guilds.get(guildID);
 
             // console.log(guild.roles)
 
@@ -45,14 +45,16 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
                     // The alert is new since the last check
                     let formattedAlert = cleanAlertData(alert);
 
-                    // Determine which roles to @ 
+                    // Determine which roles to @, if any
                     let whoToAlert = determineAlertRoleMention(formattedAlert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
 
                     let discordChannel: any = client.channels.get(alertChannel);
 
-                    discordChannel.send(`Hey <@&${whoToAlert}> there's an alert!`);
+                    if (whoToAlert !== undefined) {
+                        discordChannel.send(`Hey <@&${whoToAlert}> there's an alert!`);
+                    }
 
                     // This is where we would call a formatting function
                     let message = createAlertMessage(formattedAlert);
@@ -91,8 +93,8 @@ function cleanAlertData(baseAlert: warframeAlert) {
     cleanedAlert.rewards = '';
 
     console.log(baseAlert.MissionInfo);
-    let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
-    let newDate = formatDate(startDate);
+    // let startDate = prettyDate(baseAlert.Activation.$date.$numberLong)
+    // let newDate = formatDate(startDate);
 
     // cleanedAlert.start = newDate
 
@@ -165,8 +167,12 @@ function createAlertMessage(alertData: cleanedAlert) {
     embedPage.addField('Mission Type', alertData.missionType);
     embedPage.addField('Enemy Level', alertData.enemyLevelRange, true);
     // Rewards are credits + any extra rewards
-    embedPage.addField('Rewards', alertData.credits + ' Credits\n\n' + alertData.rewards, true);
+    embedPage.addField('Rewards', alertData.credits + ' Credits\n\n' + alertData.rewards, false);
     embedPage.setColor(3447003);
+    embedPage.setThumbnail('attachment://alerticon.jpg');
+    embedPage.attachFile('./data/alerticon.jpg');
+
+    // TODO: Determine the icon by the alert rewards eventually
 
     return embedPage;
 }

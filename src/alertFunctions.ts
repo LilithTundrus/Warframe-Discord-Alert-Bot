@@ -3,7 +3,7 @@ import * as fs from 'fs';
 const Items = require('warframe-items')
 
 // Custom imports
-import { guildAlertRoleTest } from './config';
+import { guildAlertRoleTest, guildRoleIDNitainAlert } from './config';
 import { itemReward, cleanedAlert } from './interfaces';
 
 // Global files that contain solNode and mission-type data
@@ -63,43 +63,6 @@ export function resolveFactionType(rawFaction: string) {
     }
 }
 
-// export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
-//     let rewardString: string = '';
-//     countedAlertItems.forEach(reward => {
-//         let rewardType: string;
-
-//         // TODO: refactor with warframe-items
-//         // Clean the name
-//         if (reward.ItemType.includes('VoidTearDrop')) {
-//             rewardType = 'Void Traces';
-//         } else if (reward.ItemType.includes('ArgonCrystal')) {
-//             rewardType = 'Argon Crytsal';
-//         } else if (reward.ItemType.includes('Neurode')) {
-//             rewardType = 'Neurodes';
-//         } else if (reward.ItemType.includes('Alertium')) {
-//             rewardType = 'Nitain';
-//         } else if (reward.ItemType.includes('OxiumAlloy')) {
-//             rewardType = 'Oxium';
-//         } else if (reward.ItemType.includes('Tellurium')) {
-//             rewardType = 'Tellurium';
-//         } else if (reward.ItemType.includes('NeuralSensor')) {
-//             rewardType = 'Neural Sensor';
-//         } else if (reward.ItemType.includes('Ferrite')) {
-//             rewardType = 'Ferrite';
-//         } else if (reward.ItemType.includes('ControlModule')) {
-//             rewardType = 'Control Module';
-//         } else {
-//             // An item type we haven't yet handled
-//             let rewardNameStartIndex = reward.ItemType.lastIndexOf('/') + 1;
-//             rewardType = reward.ItemType.substring(rewardNameStartIndex);
-//         }
-
-//         rewardString = rewardString + `${reward.ItemCount} ${rewardType}\n`;
-//     });
-//     // Return the string of alert items
-//     return rewardString;
-// }
-
 export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
     let rewardString: string = '';
     countedAlertItems.forEach(reward => {
@@ -121,32 +84,6 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
     // Return the string of alert items
     return rewardString;
 }
-
-// export function cleanAlertItems(alertItems: string[]) {
-//     let rewardString: string = '';
-//     alertItems.forEach(reward => {
-//         // Get rid of the extra parts of the string
-
-//         // Warframe item data looks like this: '/Lotus/StoreItems/Upgrades/Mods/FusionBundles/AlertFusionBundleSmall'
-//         // and we only want the last part of that
-//         let rewardNameStartIndex = reward.lastIndexOf('/') + 1;
-//         let parsedReward = reward.substring(rewardNameStartIndex);
-//         // Add spaces in betwen the capital letters
-//         let cleanedReward = parsedReward.replace(/([A-Z])/g, ' $1').trim();
-//         // Eventually we'll handle more edge cases here
-//         if (cleanedReward.includes('Bundle Small')) {
-//             cleanedReward = 'Endo - Small';
-//         } else if (cleanedReward.includes('Bundle Medium')) {
-//             cleanedReward = 'Endo - Medium';
-//         } else if (cleanedReward.includes('Bundle Large')) {
-//             cleanedReward = 'Endo - Large';
-//         }
-//         rewardString = rewardString + cleanedReward;
-//     });
-
-//     // Return the string of alert items
-//     return rewardString;
-// }
 
 export function cleanAlertItems(alertItems: string[]) {
     let rewardString: string = '';
@@ -173,6 +110,15 @@ export function cleanAlertItems(alertItems: string[]) {
 
 // Function to determine who the bot should @ for certain alerts
 export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
+
+    // TODO: handle when alerts don't match anything
+    if (cleanedAlert.rewards.includes('Orokin Catalyst')) {
+        // Return the catalyst role ID
+    }
+
+    if (cleanedAlert.rewards.includes('Nitain')) {
+        return guildRoleIDNitainAlert;
+    }
 
     return guildAlertRoleTest;
 }
