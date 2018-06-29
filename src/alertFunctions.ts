@@ -20,9 +20,8 @@ const missionTypeJSON = JSON.parse(missionTypes);
 const factionTypes = fs.readFileSync('./data/factions.json', 'utf-8');
 const factionTypeJSON = JSON.parse(factionTypes);
 
+// Create an instance of the warframe items array
 const items = new Items();
-
-fs.writeFileSync('./test.json', JSON.stringify(items, null, 2))
 
 /** Resolve a Warframe solNode value by solNode ID
  * @param {string} solNode String to match the global solNode JSON set to
@@ -47,7 +46,7 @@ export function resolveMissionType(rawMission: string) {
         // Return the readable value
         return missionTypeJSON[rawMission].value;
     } else {
-        // No solNode could be found
+        // No Mission type could be found
         return null;
     }
 }
@@ -61,16 +60,16 @@ export function resolveFactionType(rawFaction: string) {
         // Return the readable value
         return factionTypeJSON[rawFaction].value;
     } else {
-        // No solNode could be found
+        // No faction type could be found
         return null;
     }
 }
 
 export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
     let rewardString: string = '';
+
     countedAlertItems.forEach(reward => {
         let rewardType: string;
-
         // Clean the name
         let matchedItem = findWarframeItem(reward.ItemType);
 
@@ -81,17 +80,18 @@ export function cleanCountedAlerts(countedAlertItems: itemReward[]) {
             let rewardNameStartIndex = reward.ItemType.lastIndexOf('/') + 1;
             rewardType = reward.ItemType.substring(rewardNameStartIndex);
         }
-
+        // Add the item to the reward string (as opposed to returning an array)
         rewardString = rewardString + `${reward.ItemCount} ${rewardType}\n`;
     });
+
     // Return the string of alert items
     return rewardString;
 }
 
 export function cleanAlertItems(alertItems: string[]) {
     let rewardString: string = '';
-    alertItems.forEach(reward => {
 
+    alertItems.forEach(reward => {
         // Find the item to get the 'cleaned' name
         let matchedItem = findWarframeItem(reward);
 
@@ -99,6 +99,7 @@ export function cleanAlertItems(alertItems: string[]) {
             let cleanedReward = matchedItem.name;
             rewardString = rewardString + cleanedReward;
         } else {
+            // Do a default trim in case something isn't found
             let rewardNameStartIndex = reward.lastIndexOf('/') + 1;
             let parsedReward = reward.substring(rewardNameStartIndex);
             // Add spaces in betwen the capital letters
@@ -114,19 +115,20 @@ export function cleanAlertItems(alertItems: string[]) {
 // Function to determine who the bot should @ for certain alerts
 export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
     if (cleanedAlert.rewards.includes('Orokin Catalyst')) {
-        // Return the catalyst role ID
+        return guildRoleIDCatalyst;
     } else if (cleanedAlert.rewards.includes('Orokin Reactor')) {
-        // Return the nitain role ID
         return guildRoleIDReactor;
     } else if (cleanedAlert.rewards.includes('Nitain')) {
-        // Return the nitain role ID
         return guildRoleIDNitainAlert;
     } else if (cleanedAlert.rewards.includes('Forma')) {
-        // Return the nitain role ID
         return guildRoleIDForma;
     }
 }
 
+/** Find a Warframe's data by unique ID
+ * @param {string} itemID ID of the item to find
+ * @returns Warframe item object
+ */
 function findWarframeItem(itemID: string) {
     return items.find(entry => {
         return entry.uniqueName == itemID;
