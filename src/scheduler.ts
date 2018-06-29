@@ -23,13 +23,15 @@ export function initScheduler(client: Discord.Client, logger: Logger) {
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
     request.get(warframeWorldsstateURL)
         .then((results: string) => {
-            let guild = client.guilds.get(guildID);
 
-            console.log(guild.roles)
+            // This is for getting the IDs of the roles needed manually for adding to the config file
+            // let guild = client.guilds.get(guildID);
+            // console.log(guild.roles);
 
             // Read the old alert dataSet
             let previousWFData = fs.readFileSync('wfData.json').toString();
             let previousWFJSON = JSON.parse(previousWFData);
+
             // Parse the string returned from the request.get
             let currentWFJSON = JSON.parse(results);
 
@@ -38,25 +40,26 @@ export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
             let currentAlerts: warframeAlert[] = currentWFJSON.Alerts;
 
             // Check the previous array for the IDs of each entry
-            // If a match is not found the item is new
+            // If a match is NOT found, the alert is new
             for (let alert of currentAlerts) {
                 let matchedAlert = checkPreviousWarframeAlertsForGivenID(alert._id.$oid, previousAlerts);
                 if (!matchedAlert) {
                     // The alert is new since the last check
                     let formattedAlert = cleanAlertData(alert);
 
-                    // Determine which roles to @, if any
-                    let whoToAlert = determineAlertRoleMention(formattedAlert);
+                    // Determine which roles to @mention, if any
+                    let roleID = determineAlertRoleMention(formattedAlert);
                     // Start crafting a message
                     logger.debug('Alerts have changed');
 
                     let discordChannel: any = client.channels.get(alertChannel);
 
-                    if (whoToAlert !== undefined) {
-                        discordChannel.send(`Hey <@&${whoToAlert}> there's an alert!`);
+                    // Let the role know that they have a new alert
+                    if (roleID !== undefined) {
+                        discordChannel.send(`Hey <@&${roleID}> there's an alert!`);
                     }
 
-                    // This is where we would call a formatting function
+                    // Create the embed message to send and send it to the channe;
                     let message = createAlertMessage(formattedAlert);
                     discordChannel.send(message);
                 }
@@ -176,8 +179,6 @@ function createAlertMessage(alertData: cleanedAlert) {
 
     return embedPage;
 }
-
-
 
 // Convert unix long dates to hours + minutes + seconds
 // function msToTime(milliseconds) {
