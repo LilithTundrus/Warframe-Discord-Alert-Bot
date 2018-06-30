@@ -123,6 +123,7 @@ export function determineAlertRoleMention(cleanedAlert: cleanedAlert) {
     } else if (cleanedAlert.rewards.includes('Forma')) {
         return guildRoleIDForma;
     }
+    // TODO add orokin cells (maybe)
 }
 
 /** Find a Warframe's data by unique ID
