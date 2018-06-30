@@ -17,7 +17,7 @@ import {
 export function initScheduler(client: Discord.Client, logger: Logger) {
     setInterval(() => {
         checkForAlertUpdates(client, logger);
-    }, 20000);
+    }, 60000);
 }
 
 export function checkForAlertUpdates(client: Discord.Client, logger: Logger) {
@@ -168,6 +168,15 @@ function createAlertMessage(alertData: cleanedAlert) {
     embedPage.addField('Location', alertData.location, true);
     embedPage.addField('Faction', alertData.faction, true);
     embedPage.addField('Mission Type', alertData.missionType);
+
+    if (alertData.archwing) {
+        embedPage.addField('Archwing Mission', alertData.archwing, true);
+    }
+
+    if (alertData.archwing) {
+        embedPage.addField('Nightmare Mode', alertData.nightmare, true);
+    }
+
     embedPage.addField('Enemy Level', alertData.enemyLevelRange, true);
     // Rewards are credits + any extra rewards
     embedPage.addField('Rewards', alertData.credits + ' Credits\n\n' + alertData.rewards, false);
