@@ -5,6 +5,10 @@
 This is a bot for Discord written in Typescript using the Disocrd.js framework
 
 
+## What Does It do?
+
+This is a custom bot for Warframe that will list all alerts as they appear ingame and if the rewards are rare enough the bot will @mention a specific role to let them know about the given alert
+
 ## Running The Bot
 
 **Note**: Make sure you have Node.js installed on your computer as well as Typescript 2.7 or higher
